@@ -1,0 +1,1684 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="index, follow">
+    <title>מערכת ניהול ארגונים — Techrunow</title>
+    <meta name="description" content="מערכת ניהול ארגונים מקיפה שמאחדת את כל תהליכי העסק במקום אחד. Techrunow מביאה לכם את פתרון ה-ERP המתקדם ביותר בענן לישראל. התחילו עכשיו.">
+    <meta name="keywords" content="מערכת ניהול ארגונים, מערכת ERP בענן לישראל, פתרון ERP מקיף לארגונים בישראל, תוכנה ארגונית, ניהול עסק בענן">
+    
+    <!-- Favicons -->
+    <link rel="icon" type="image/x-icon" href="/assets/favicon.ico">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="48x48" href="/assets/favicon-48x48.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/assets/favicon-192x192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="/assets/favicon-512x512.png">
+    <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+    <!-- Zappy Analytics -->
+<script>
+(function() {
+  'use strict';
+  
+  // Configuration
+  var config = {
+    websiteId: '2f3018ad-51c2-4ca7-acc3-c6cd6d76db79',
+    apiUrl: 'https://api.zappy5.com/api/analytics/track',
+    sessionDuration: 30 * 60 * 1000, // 30 minutes
+    visitorDuration: 30 * 24 * 60 * 60 * 1000, // 30 days
+    trackPageViews: true,
+    trackClicks: true,
+    trackFormSubmissions: true
+  };
+  
+  // Generate or retrieve persistent visitor ID (30 days)
+  function getVisitorId() {
+    var visitorKey = 'zappy_visitor_' + config.websiteId;
+    var visitor = null;
+    
+    try {
+      visitor = localStorage.getItem(visitorKey);
+      if (visitor) {
+        var visitorData = JSON.parse(visitor);
+        var now = Date.now();
+        
+        // Check if visitor ID is still valid (30 days)
+        if (now - visitorData.created < config.visitorDuration) {
+          // Update last seen timestamp
+          visitorData.lastSeen = now;
+          localStorage.setItem(visitorKey, JSON.stringify(visitorData));
+          return visitorData.id;
+        }
+      }
+    } catch (e) {
+      console.warn('Zappy Analytics: LocalStorage not available');
+    }
+    
+    // Generate new visitor ID
+    var newVisitorId = 'zv_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+    
+    try {
+      localStorage.setItem(visitorKey, JSON.stringify({
+        id: newVisitorId,
+        created: Date.now(),
+        lastSeen: Date.now()
+      }));
+    } catch (e) {
+      // Continue without local storage
+    }
+    
+    return newVisitorId;
+  }
+  
+  // Generate or retrieve session ID (30 minutes)
+  function getSessionId() {
+    var sessionKey = 'zappy_session_' + config.websiteId;
+    var session = null;
+    
+    try {
+      session = sessionStorage.getItem(sessionKey);
+      if (session) {
+        var sessionData = JSON.parse(session);
+        var now = Date.now();
+        
+        // Check if session is still valid
+        if (now - sessionData.timestamp < config.sessionDuration) {
+          // Update timestamp
+          sessionData.timestamp = now;
+          sessionStorage.setItem(sessionKey, JSON.stringify(sessionData));
+          return sessionData.id;
+        }
+      }
+    } catch (e) {
+      console.warn('Zappy Analytics: SessionStorage not available');
+    }
+    
+    // Generate new session ID
+    var newSessionId = 'zs_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+    
+    try {
+      sessionStorage.setItem(sessionKey, JSON.stringify({
+        id: newSessionId,
+        timestamp: Date.now()
+      }));
+    } catch (e) {
+      // Continue without session storage
+    }
+    
+    return newSessionId;
+  }
+  
+  var visitorId = getVisitorId();
+  var sessionId = getSessionId();
+  
+  // Track an event
+  function trackEvent(eventType, data) {
+    data = data || {};
+    
+    var eventData = {
+      website_id: config.websiteId,
+      event_type: eventType,
+      page_path: window.location.pathname,
+      referrer: document.referrer || 'direct',
+      visitor_id: visitorId,
+      session_id: sessionId,
+      metadata: data
+    };
+    
+    // Use sendBeacon if available (better for page unload events)
+    if (navigator.sendBeacon) {
+      var blob = new Blob([JSON.stringify(eventData)], { type: 'application/json' });
+      navigator.sendBeacon(config.apiUrl, blob);
+    } else {
+      // Fallback to fetch
+      fetch(config.apiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(eventData),
+        keepalive: true
+      }).catch(function(error) {
+        console.warn('Zappy Analytics: Failed to track event', error);
+      });
+    }
+  }
+  
+  // Track page view
+  if (config.trackPageViews) {
+    trackEvent('pageview', {
+      title: document.title,
+      url: window.location.href
+    });
+  }
+  
+  // Track clicks on important elements
+  if (config.trackClicks) {
+    document.addEventListener('click', function(e) {
+      var target = e.target;
+      
+      // Track button clicks (counted as actions)
+      if (target.tagName === 'BUTTON' || target.closest('button')) {
+        var button = target.tagName === 'BUTTON' ? target : target.closest('button');
+        trackEvent('click', {
+          element: 'button',
+          text: button.textContent.trim().substring(0, 100),
+          id: button.id || null,
+          class: button.className || null
+        });
+      }
+      
+      // Track link clicks (navigation - not counted as actions)
+      else if (target.tagName === 'A' || target.closest('a')) {
+        var link = target.tagName === 'A' ? target : target.closest('a');
+        trackEvent('navigation', {
+          element: 'link',
+          text: link.textContent.trim().substring(0, 100),
+          href: link.href,
+          external: link.hostname !== window.location.hostname
+        });
+      }
+    }, true);
+  }
+  
+  // Track form submissions
+  if (config.trackFormSubmissions) {
+    document.addEventListener('submit', function(e) {
+      var form = e.target;
+      
+      trackEvent('form_submit', {
+        form_id: form.id || null,
+        form_name: form.name || null,
+        form_action: form.action || null,
+        form_method: form.method || 'GET'
+      });
+    }, true);
+  }
+  
+  // Track time on page (send on page unload)
+  var pageLoadTime = Date.now();
+  
+  window.addEventListener('beforeunload', function() {
+    var timeOnPage = Math.floor((Date.now() - pageLoadTime) / 1000); // in seconds
+    
+    trackEvent('page_unload', {
+      time_on_page: timeOnPage,
+      page_path: window.location.pathname
+    });
+  });
+  
+  // Expose tracking function globally for custom events
+  window.zappyAnalytics = {
+    track: trackEvent,
+    getVisitorId: function() { return visitorId; },
+    getSessionId: function() { return sessionId; }
+  };
+  
+})();
+</script>
+<!-- End Zappy Analytics -->
+    <meta property="og:title" content="מערכת ניהול ארגונים — Techrunow">
+    <meta property="og:description" content="מערכת ניהול ארגונים מקיפה שמאחדת את כל תהליכי העסק במקום אחד. Techrunow מביאה לכם את פתרון ה-ERP המתקדם ביותר בענן לישראל. התחילו עכשיו.">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="מערכת ניהול ארגונים — Techrunow">
+    <meta name="twitter:description" content="מערכת ניהול ארגונים מקיפה שמאחדת את כל תהליכי העסק במקום אחד. Techrunow מביאה לכם את פתרון ה-ERP המתקדם ביותר בענן לישראל. התחילו עכשיו.">
+    <meta property="og:type" content="website">
+  <meta property="og:locale" content="he_IL">
+  
+  
+  
+  
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Favicons -->
+    <link rel="icon" type="image/x-icon" href="/assets/favicon.ico">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="48x48" href="/assets/favicon-48x48.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/assets/favicon-192x192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="/assets/favicon-512x512.png">
+    <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+    <!-- Cookie Consent -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vanilla-cookieconsent@3/dist/cookieconsent.css">
+    <script src="https://cdn.jsdelivr.net/npm/vanilla-cookieconsent@3/dist/cookieconsent.umd.js"></script>
+    <!-- Mickidum Accessibility Toolbar -->
+    <script src="https://cdn.jsdelivr.net/gh/mickidum/acc_toolbar/acctoolbar/acctoolbar.min.js"></script>
+    <link rel="stylesheet" href="/styles.css">
+
+    <style id="zappy-dropdown-submenu-styles">
+      /* ========== DESKTOP DROPDOWN SUBMENU STYLES ========== */
+      /* Base styles for dropdown submenus - parent must be positioned */
+      .nav-menu li:has(.sub-menu), nav li:has(.sub-menu), .navbar li:has(.sub-menu), #navMenu li:has(.sub-menu) { position: relative; }
+      /* Submenu base - hidden by default */
+      .nav-menu .sub-menu, nav .sub-menu, .navbar .sub-menu, #navMenu .sub-menu { display: block !important; position: absolute !important; top: 100%; left: 0; min-width: 220px; background: white; border-radius: 8px; box-shadow: 0 8px 25px rgba(0,0,0,0.15); padding: 8px 0; opacity: 0; visibility: hidden; transform: translateY(10px); transition: all 0.3s ease; z-index: 1000; list-style: none; pointer-events: none; }
+      /* CRITICAL: Desktop hover styles to show dropdown */
+      .nav-menu li:hover > .sub-menu, nav li:hover > .sub-menu, .navbar li:hover > .sub-menu, #navMenu li:hover > .sub-menu { opacity: 1 !important; visibility: visible !important; transform: translateY(0) !important; pointer-events: auto !important; }
+      /* Submenu item styling */
+      .sub-menu li { list-style: none; margin: 0; padding: 0; }
+      .sub-menu a { display: block !important; padding: 10px 16px !important; color: var(--text-dark, #333) !important; font-weight: 500; text-decoration: none; white-space: nowrap; transition: background-color 0.2s; }
+      .sub-menu .zappy-nav-child > a { padding-left: 28px !important; font-size: 0.9em !important; opacity: 0.85 !important; }
+      [dir="rtl"] .sub-menu .zappy-nav-child > a, html[lang="he"] .sub-menu .zappy-nav-child > a, html[lang="ar"] .sub-menu .zappy-nav-child > a { padding-left: 10px !important; padding-right: 28px !important; }
+      .sub-menu .zappy-nav-parent > a { font-weight: 600 !important; }
+      .sub-menu a:hover { background-color: #f5f5f5; }
+      /* RTL (Hebrew/Arabic) dropdown positioning */
+      [dir="rtl"] .nav-menu .sub-menu, [dir="rtl"] nav .sub-menu, [dir="rtl"] .navbar .sub-menu, html[lang="he"] .nav-menu .sub-menu, html[lang="he"] nav .sub-menu, html[lang="he"] .navbar .sub-menu, html[lang="ar"] .nav-menu .sub-menu, html[lang="ar"] nav .sub-menu, html[lang="ar"] .navbar .sub-menu { left: auto !important; right: 0 !important; }
+      /* Hide empty dropdown menus (exclude catalog sub-menus that use <a> children instead of <li>) */
+      .sub-menu:empty, .sub-menu:not(:has(li:not(.zappy-hidden-menu-item))):not(:has(> a)), .sub-menu:not(:has(li)):not(:has(> a)) { display: none !important; opacity: 0 !important; visibility: hidden !important; pointer-events: none !important; }
+      /* Desktop: show submenu on Menu Group hover */
+      li:has(.menu-group-title):hover > .sub-menu { opacity: 1 !important; visibility: visible !important; transform: translateY(0) !important; pointer-events: auto !important; }
+      /* Menu Group title styling */
+      .nav-menu > li > .menu-group-title, #navMenu > li > .menu-group-title { display: inline-block; padding: 0.5rem 1rem; cursor: default; user-select: none; }
+      
+      /* ========== MOBILE SUBMENU STYLES ========== */
+      @media (max-width: 768px) {
+        .nav-menu .sub-menu, nav .sub-menu, .navbar .sub-menu, #navMenu .sub-menu { position: static !important; transform: none !important; box-shadow: none !important; background: transparent !important; max-height: 0; overflow: hidden; opacity: 0; visibility: hidden; transition: max-height 0.3s ease, opacity 0.3s ease; padding: 0 !important; border-radius: 0 !important; }
+        .navbar .sub-menu.mobile-expanded, .nav-menu .sub-menu.mobile-expanded, #navMenu .sub-menu.mobile-expanded { max-height: none !important; overflow-y: visible !important; opacity: 1 !important; visibility: visible !important; padding: 8px 0 8px 16px !important; }
+        [dir="rtl"] .sub-menu.mobile-expanded, html[lang="he"] .sub-menu.mobile-expanded { padding: 8px 16px 8px 0 !important; }
+        /* Disable hover behavior on mobile */
+        .nav-menu li:hover > .sub-menu, nav li:hover > .sub-menu, .navbar li:hover > .sub-menu, #navMenu li:hover > .sub-menu { opacity: 0; visibility: hidden; pointer-events: none; }
+        .nav-menu li > .sub-menu.mobile-expanded, nav li > .sub-menu.mobile-expanded, .navbar li > .sub-menu.mobile-expanded, #navMenu li > .sub-menu.mobile-expanded { opacity: 1 !important; visibility: visible !important; pointer-events: auto !important; }
+        .nav-menu li:has(.sub-menu), nav li:has(.sub-menu), .navbar li:has(.sub-menu), #navMenu li:has(.sub-menu) { display: flex !important; flex-wrap: wrap !important; align-items: center !important; position: relative !important; min-height: 44px !important; }
+        .nav-menu li:has(.sub-menu) > a, nav li:has(.sub-menu) > a, .navbar li:has(.sub-menu) > a, #navMenu li:has(.sub-menu) > a { flex: 1 !important; min-width: 0 !important; }
+        .nav-menu li:has(.sub-menu) > .menu-group-title, nav li:has(.sub-menu) > .menu-group-title, .navbar li:has(.sub-menu) > .menu-group-title, #navMenu li:has(.sub-menu) > .menu-group-title { flex: 1 !important; min-width: 0 !important; padding: 0 !important; line-height: inherit !important; }
+        .nav-menu li:has(.sub-menu) > .sub-menu, nav li:has(.sub-menu) > .sub-menu, .navbar li:has(.sub-menu) > .sub-menu, #navMenu li:has(.sub-menu) > .sub-menu { flex-basis: 100% !important; width: 100% !important; }
+        .nav-menu li:has(.sub-menu) > a [class*="chevron"], .nav-menu li:has(.sub-menu) > a [class*="arrow"], .nav-menu li:has(.sub-menu) > a .fa-chevron-down, .nav-menu li:has(.sub-menu) > a .fa-angle-down, nav li:has(.sub-menu) > a [class*="chevron"], nav li:has(.sub-menu) > a [class*="arrow"], #navMenu li:has(.sub-menu) > a [class*="chevron"], #navMenu li:has(.sub-menu) > a [class*="arrow"] { display: none !important; visibility: hidden !important; }
+        .mobile-submenu-toggle { display: flex !important; align-items: center !important; justify-content: center !important; width: 44px !important; height: auto !important; background: transparent !important; border: none !important; cursor: pointer !important; color: var(--text-dark) !important; position: static !important; flex-shrink: 0 !important; align-self: stretch !important; z-index: 2 !important; padding: 0 !important; margin: 0 !important; }
+        .mobile-submenu-toggle::after { content: '' !important; width: 0 !important; height: 0 !important; border-left: 6px solid transparent !important; border-right: 6px solid transparent !important; border-top: 7px solid currentColor !important; transition: transform 0.3s ease !important; }
+        .mobile-submenu-toggle.expanded::after { transform: rotate(180deg) !important; }
+        .sub-menu a { padding: 10px 0 !important; display: block !important; color: var(--text-dark) !important; white-space: normal !important; }
+        .sub-menu .zappy-nav-child > a { padding-left: 28px !important; font-size: 0.9em !important; opacity: 0.85 !important; }
+        [dir="rtl"] .sub-menu .zappy-nav-child > a, html[lang="he"] .sub-menu .zappy-nav-child > a, html[lang="ar"] .sub-menu .zappy-nav-child > a { padding-left: 0 !important; padding-right: 28px !important; }
+        .sub-menu .zappy-nav-parent > a { font-weight: 600 !important; }
+        .nav-menu.active, #navMenu.active { max-width: 100vw !important; overflow-x: hidden !important; box-sizing: border-box !important; }
+        .navbar .sub-menu li a, nav.navbar .sub-menu li a, .zappy-products-dropdown .sub-menu a { color: var(--text-dark) !important; }
+      }
+      @media (min-width: 769px) { .mobile-submenu-toggle { display: none !important; } }
+    </style>
+
+    <style id="mobile-lang-menu-deployed-css">
+    @media (max-width: 768px) {
+      .lang-switcher,
+      .nav-cta-container .lang-switcher,
+      .nav-container .lang-switcher,
+      .navbar .lang-switcher,
+      .navbar .nav-cta-container .lang-switcher,
+      .nav-icons-left .lang-switcher,
+      .nav-ecommerce-icons .lang-switcher { display: none !important; }
+      .mobile-lang-menu { width: 100%; border-top: 1px solid rgba(128,128,128,0.2); padding: 8px 0 0 0; margin-top: 8px; }
+      .mobile-lang-toggle { display: flex !important; align-items: center; justify-content: space-between; width: 100%; padding: 12px 16px; background: none; border: none; cursor: pointer; font-size: 15px; color: inherit; font-family: inherit; }
+      .mobile-lang-toggle::after { content: ''; display: inline-block; width: 8px; height: 8px; border-right: 2px solid currentColor; border-bottom: 2px solid currentColor; transform: rotate(45deg); transition: transform 0.3s ease; margin-left: 8px; }
+      .mobile-lang-toggle.expanded::after { transform: rotate(-135deg); }
+      .mobile-lang-options { max-height: 0; overflow: hidden; transition: max-height 0.3s ease; }
+      .mobile-lang-options.expanded { max-height: 300px; }
+      .mobile-lang-option { display: flex !important; align-items: center; gap: 10px; padding: 10px 24px; text-decoration: none; color: inherit; font-size: 14px; font-family: inherit; }
+      .mobile-lang-option:hover { background: rgba(128,128,128,0.1); }
+      .mobile-lang-option.active { font-weight: 600; opacity: 0.7; pointer-events: none; }
+      .mobile-lang-option img { width: 20px; height: 20px; border-radius: 50%; }
+    }
+    @media (min-width: 769px) {
+      .mobile-lang-menu { display: none !important; }
+    }
+    </style>
+
+    <style id="zappy-widget-visibility">
+      #mic-access-tool-general-button, .mic-access-tool-general-button,
+      #mic-init-access-tool .mic-access-tool-general-button, #mic-init-access-tool #mic-access-tool-general-button,
+      ._access-icon, #mic-access-tool-box, .mic-access-tool-box,
+      #mic-init-access-tool #mic-access-tool-box, div[id*="mic-access-tool-box"], ._access-menu {
+        display: none !important; visibility: hidden !important; opacity: 0 !important; pointer-events: none !important;
+      }
+    </style>
+</head>
+<body>
+
+  <nav class="navbar" dir="rtl">
+  <button class="mobile-toggle" id="mobileToggle" aria-label="Menu">
+    <svg class="hamburger-icon" width="24" height="24" viewBox="0 0 24 24" fill="none">
+      <path d="M3 12h18M3 6h18M3 18h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
+    </svg>
+    <svg class="close-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" style="display: none;">
+      <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
+    </svg>
+  </button>
+
+  <button class="phone-header-btn" data-phone="" aria-label="Call">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+    </svg>
+  </button>
+
+  <div class="nav-container">
+    <div class="nav-right-group"><div class="nav-brand">
+      <a href="/" class="logo-link">
+        <img src="/assets/techrunow-saas-logo.webp" alt="Techrunow" class="logo">
+      </a>
+    </div><ul class="nav-menu" id="navMenu"><li><a href="/features">תכונות</a></li><li><a href="/about">אודות</a></li></ul></div>
+
+    
+
+    <div class="nav-cta-container">
+      <a href="/contact" class="nav-cta-btn">צור קשר</a>
+    </div>
+  </div>
+</nav>
+<script>
+
+// Navbar Mobile Menu Toggle and Contrast Fix
+(function() {
+  // Use 'load' event instead of 'DOMContentLoaded' to ensure we run AFTER all other scripts
+  window.addEventListener('load', function() {
+    
+    // FIX MOBILE BUTTON CONTRAST
+    // Detect navbar background color and apply contrasting color to mobile buttons
+    const navbar = document.querySelector('.navbar, nav, header');
+    if (!navbar) {
+      console.log('[Navbar] Navbar element not found');
+      return;
+    }
+    
+    // DECLARE VARIABLES EARLY to avoid Temporal Dead Zone errors
+    // These are used in multiple places below
+    let mobileToggle = document.getElementById('mobileToggle') ||
+                       document.querySelector('.mobile-toggle') ||
+                       document.querySelector('.hamburger') ||
+                       document.querySelector('.hamburger-menu') ||
+                       document.querySelector('.menu-toggle') ||
+                       document.querySelector('.burger-menu') ||
+                       document.querySelector('[aria-label="Menu"]') ||
+                       document.querySelector('[aria-label="תפריט"]');
+    
+    const phoneBtn = document.querySelector('.phone-header-btn');
+    
+    const computedStyle = window.getComputedStyle(navbar);
+    let bgColor = computedStyle.backgroundColor;
+    
+    console.log('[Navbar] Initial navbar background:', bgColor);
+    
+    // Check if background is transparent or rgba with 0 alpha
+    const isTransparent = bgColor === 'transparent' || 
+                         bgColor === 'rgba(0, 0, 0, 0)' ||
+                         (bgColor.startsWith('rgba') && bgColor.includes(', 0)'));
+    
+    if (isTransparent) {
+      // Check for background-image or gradient
+      const bgImage = computedStyle.backgroundImage;
+      if (bgImage && bgImage !== 'none') {
+        console.log('[Navbar] Navbar has background image/gradient, using dark text');
+        bgColor = 'rgb(240, 240, 240)'; // Assume light background
+      } else {
+        // Transparent navbar - check body background
+        const bodyBg = window.getComputedStyle(document.body).backgroundColor;
+        console.log('[Navbar] Navbar transparent, using body background:', bodyBg);
+        bgColor = bodyBg;
+      }
+    }
+    
+    // Calculate luminance to determine if background is light or dark
+    const rgb = bgColor.match(/\d+/g);
+    if (rgb && rgb.length >= 3) {
+      const r = parseInt(rgb[0]);
+      const g = parseInt(rgb[1]);
+      const b = parseInt(rgb[2]);
+      const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+      
+      // Mobile button colors are set by Claude's AI-generated CSS (same as .nav-menu a)
+      // No dynamic color overrides needed - colors come from the generated navbar CSS
+      console.log('[Navbar] Mobile button colors preserved from Claude CSS (luminance:', luminance.toFixed(2) + ')');
+      
+      // FIX ICON SIZES - Ensure SVGs are properly sized and visible
+      // INJECT CRITICAL CSS TO OVERRIDE ANY CONFLICTING RULES
+      const criticalCSS = document.createElement('style');
+      criticalCSS.id = 'zappy-mobile-nav-fix';
+      const htmlLang = document.documentElement.lang || 'en';
+      const htmlDir = document.documentElement.dir || 'ltr';
+      // Check both dir attribute AND lang for RTL detection
+      // dir="rtl" is the most reliable indicator
+      const isRTL = htmlDir === 'rtl' || htmlLang === 'he' || htmlLang === 'ar';
+      
+      criticalCSS.textContent = `
+        /* Hide mobile buttons on desktop, show only on mobile */
+        @media (min-width: 769px) {
+          .mobile-toggle,
+          .phone-header-btn {
+            display: none !important;
+          }
+        }
+        
+        /* Show and position mobile buttons correctly on mobile */
+        @media (max-width: 768px) {
+          .mobile-toggle,
+          .phone-header-btn {
+            position: absolute !important;
+            top: 50% !important;
+            transform: translateY(-50%) !important;
+            z-index: 1001 !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            width: 36px !important;
+            height: 36px !important;
+            border-radius: 50% !important;
+            border: none !important;
+            cursor: pointer !important;
+            padding: 6px !important;
+            background: none !important;
+            color: var(--nav-text, var(--text-dark)) !important;
+          }
+          
+          /* LTR positioning (default): hamburger LEFT, phone RIGHT */
+          html:not([dir="rtl"]):not([lang="he"]):not([lang="ar"]) .mobile-toggle,
+          html[dir="ltr"] .mobile-toggle {
+            left: 12px !important;
+            right: auto !important;
+          }
+          html:not([dir="rtl"]):not([lang="he"]):not([lang="ar"]) .phone-header-btn,
+          html[dir="ltr"] .phone-header-btn {
+            right: 12px !important;
+            left: auto !important;
+          }
+          
+          /* RTL positioning: hamburger RIGHT, phone LEFT */
+          html[dir="rtl"] .mobile-toggle,
+          html[lang="he"] .mobile-toggle,
+          html[lang="ar"] .mobile-toggle {
+            right: 12px !important;
+            left: auto !important;
+          }
+          html[dir="rtl"] .phone-header-btn,
+          html[lang="he"] .phone-header-btn,
+          html[lang="ar"] .phone-header-btn {
+            left: 12px !important;
+            right: auto !important;
+          }
+          
+          /* CRITICAL: Ensure nav-container has min-height on mobile */
+          /* All children are positioned absolutely/fixed on mobile, so height:auto collapses to 0 */
+          .nav-container {
+            min-height: 70px !important;
+            position: relative !important;
+          }
+          
+          /* Ensure SVG icons are properly sized and inherit color */
+          .mobile-toggle svg,
+          .phone-header-btn svg {
+            width: 24px !important;
+            height: 24px !important;
+            /* Don't force display - let JavaScript control hamburger/close toggle */
+          }
+          
+          /* Reset nav-cta-container on mobile - remove desktop box-shadow/padding */
+          /* that creates a visible ghost box when CTA button is hidden */
+          .nav-cta-container {
+            box-shadow: none !important;
+            padding: 0 !important;
+          }
+          
+          /* Hide nav-cta-container entirely on mobile when there's no lang-switcher */
+          /* (only the CTA button is inside, and it's hidden on mobile) */
+          .nav-cta-container:not(:has(.lang-switcher)) {
+            display: none !important;
+          }
+          
+          /* CRITICAL: Prevent hero image fade gradient from bleeding over headline text */
+          /* The .image-fade-gradient has bottom: -30px (extends below parent) */
+          /* On mobile stacked layout, this overlaps the h1 text below the image */
+          .hero-image-column {
+            overflow: hidden !important;
+          }
+          .image-fade-gradient {
+            bottom: 0 !important;
+          }
+          
+          /* Hide desktop language switcher on mobile - hamburger menu handles it */
+          /* High specificity to override stored CSS */
+          .lang-switcher,
+          .nav-cta-container .lang-switcher,
+          .nav-container .lang-switcher,
+          .navbar .lang-switcher,
+          .navbar .nav-cta-container .lang-switcher {
+            display: none !important;
+          }
+        }
+      `;
+      
+      // Remove existing fix if present and inject new one
+      const existing = document.getElementById('zappy-mobile-nav-fix');
+      if (existing) existing.remove();
+      document.head.appendChild(criticalCSS);
+      
+      console.log('[Navbar] Critical CSS injected for mobile nav positioning');
+      
+      // ONLY apply inline positioning styles on mobile viewport
+      // On desktop, the CSS handles hiding these buttons with display: none
+      // Inline styles were breaking desktop layout by overriding CSS
+      const isMobileViewport = window.innerWidth <= 768;
+      
+      if (mobileToggle) {
+        // Icon sizing applies to all viewports for consistency
+        const hamburgerIcon = mobileToggle.querySelector('.hamburger-icon');
+        const closeIcon = mobileToggle.querySelector('.close-icon');
+        
+        if (hamburgerIcon) {
+          hamburgerIcon.style.setProperty('width', '24px', 'important');
+          hamburgerIcon.style.setProperty('height', '24px', 'important');
+          hamburgerIcon.style.setProperty('display', 'block', 'important'); // Show hamburger by default
+        }
+        if (closeIcon) {
+          closeIcon.style.setProperty('width', '24px', 'important');
+          closeIcon.style.setProperty('height', '24px', 'important');
+          closeIcon.style.setProperty('display', 'none', 'important'); // Hide close icon by default
+        }
+        
+        // ONLY set positioning inline styles on mobile
+        if (isMobileViewport) {
+          mobileToggle.style.setProperty('position', 'absolute', 'important');
+          mobileToggle.style.setProperty('top', '50%', 'important');
+          mobileToggle.style.setProperty('transform', 'translateY(-50%)', 'important');
+          mobileToggle.style.setProperty('z-index', '1001', 'important');
+          
+          // Clear any inline left/right so CSS can take over based on html[dir]
+          mobileToggle.style.removeProperty('left');
+          mobileToggle.style.removeProperty('right');
+          
+          console.log('[Navbar] Mobile toggle positioning applied (mobile viewport)');
+        } else {
+          // On desktop, clear any positioning styles to let CSS handle it
+          mobileToggle.style.removeProperty('position');
+          mobileToggle.style.removeProperty('top');
+          mobileToggle.style.removeProperty('transform');
+          mobileToggle.style.removeProperty('z-index');
+          mobileToggle.style.removeProperty('left');
+          mobileToggle.style.removeProperty('right');
+          console.log('[Navbar] Desktop viewport - cleared mobile toggle inline positioning');
+        }
+      }
+      
+      if (phoneBtn) {
+        // Icon sizing applies to all viewports
+        const phoneIcon = phoneBtn.querySelector('svg');
+        if (phoneIcon) {
+          phoneIcon.style.width = '24px';
+          phoneIcon.style.height = '24px';
+          phoneIcon.setAttribute('width', '24');
+          phoneIcon.setAttribute('height', '24');
+        }
+        
+        // ONLY set positioning inline styles on mobile
+        if (isMobileViewport) {
+          phoneBtn.style.setProperty('position', 'absolute', 'important');
+          phoneBtn.style.setProperty('top', '50%', 'important');
+          phoneBtn.style.setProperty('transform', 'translateY(-50%)', 'important');
+          phoneBtn.style.setProperty('z-index', '1001', 'important');
+          
+          // Clear any inline left/right so CSS can take over based on html[dir]
+          phoneBtn.style.removeProperty('left');
+          phoneBtn.style.removeProperty('right');
+          
+          console.log('[Navbar] Phone button positioning applied (mobile viewport)');
+        } else {
+          // On desktop, clear any positioning styles to let CSS handle it
+          phoneBtn.style.removeProperty('position');
+          phoneBtn.style.removeProperty('top');
+          phoneBtn.style.removeProperty('transform');
+          phoneBtn.style.removeProperty('z-index');
+          phoneBtn.style.removeProperty('left');
+          phoneBtn.style.removeProperty('right');
+          console.log('[Navbar] Desktop viewport - cleared phone button inline positioning');
+        }
+      }
+    } else {
+      console.log('[Navbar] Could not parse background color:', bgColor);
+    }
+    
+    // MOBILE MENU TOGGLE
+    // Re-query in case DOM changed (mobileToggle already declared at top of function)
+    mobileToggle = document.getElementById('mobileToggle') ||
+                   document.querySelector('.mobile-toggle') ||
+                   document.querySelector('.hamburger') ||
+                   document.querySelector('.hamburger-menu') ||
+                   document.querySelector('.menu-toggle') ||
+                   document.querySelector('.burger-menu') ||
+                   document.querySelector('[aria-label="Menu"]') ||
+                   document.querySelector('[aria-label="תפריט"]');
+    
+    // EXPANDED SEARCH: Find nav menu by ID or class
+    const navMenu = document.getElementById('navMenu') ||
+                  document.querySelector('.nav-menu') ||
+                  document.querySelector('.nav-links') ||
+                  document.querySelector('nav ul:not(.submenu)');
+    
+    if (!mobileToggle || !navMenu) {
+      console.log('[Navbar] Mobile toggle or menu not found:', { toggle: !!mobileToggle, menu: !!navMenu });
+      return;
+    }
+    
+    // Ensure navMenu has ID for CSS targeting
+    if (!navMenu.id) {
+      navMenu.id = 'navMenu';
+    }
+    
+    console.log('[Navbar] Initializing mobile menu...');
+    
+    // Remove any existing event listeners by cloning the button
+    const newToggle = mobileToggle.cloneNode(true);
+    mobileToggle.parentNode.replaceChild(newToggle, mobileToggle);
+    
+    // Toggle menu on button click - use newToggle now
+    newToggle.addEventListener('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      
+      const hamburgerIcon = this.querySelector('.hamburger-icon');
+      const closeIcon = this.querySelector('.close-icon');
+      const isActive = navMenu.classList.contains('active');
+      
+      if (isActive) {
+        // Close menu
+        navMenu.classList.remove('active');
+        if (hamburgerIcon) hamburgerIcon.style.setProperty('display', 'block', 'important');
+        if (closeIcon) closeIcon.style.setProperty('display', 'none', 'important');
+        document.body.style.overflow = '';
+        console.log('[Navbar] Menu closed');
+      } else {
+        // Open menu
+        navMenu.classList.add('active');
+        if (hamburgerIcon) hamburgerIcon.style.setProperty('display', 'none', 'important');
+        if (closeIcon) closeIcon.style.setProperty('display', 'block', 'important');
+        document.body.style.overflow = 'hidden';
+        console.log('[Navbar] Menu opened');
+      }
+    });
+    
+    // Close menu when clicking nav links (but NOT dropdown toggles)
+    const navLinks = navMenu.querySelectorAll('a');
+    navLinks.forEach(function(link) {
+      link.addEventListener('click', function() {
+        // Don't close if it's a dropdown child (unless it's a real navigation link)
+        if (this.getAttribute('href') === '#') return;
+        
+        const hamburgerIcon = newToggle.querySelector('.hamburger-icon');
+        const closeIcon = newToggle.querySelector('.close-icon');
+        
+        navMenu.classList.remove('active');
+        if (hamburgerIcon) hamburgerIcon.style.setProperty('display', 'block', 'important');
+        if (closeIcon) closeIcon.style.setProperty('display', 'none', 'important');
+        document.body.style.overflow = '';
+        console.log('[Navbar] Menu closed (link clicked)');
+      });
+    });
+    
+    // DROPDOWN MENU TOGGLE (for mobile and touch devices)
+    var dropdownToggles = navMenu.querySelectorAll('.dropdown-toggle');
+    dropdownToggles.forEach(function(toggle) {
+      toggle.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        var parent = this.closest('.nav-dropdown');
+        if (!parent) return;
+        
+        // Close other open dropdowns at the same level
+        var siblings = parent.parentNode.querySelectorAll('.nav-dropdown.open');
+        siblings.forEach(function(sib) {
+          if (sib !== parent) sib.classList.remove('open');
+        });
+        
+        parent.classList.toggle('open');
+        console.log('[Navbar] Dropdown toggled:', parent.classList.contains('open') ? 'open' : 'closed');
+      });
+    });
+    
+    // Close dropdowns when clicking outside
+    document.addEventListener('click', function(e) {
+      if (!e.target.closest('.nav-dropdown')) {
+        var openDropdowns = document.querySelectorAll('.nav-dropdown.open');
+        openDropdowns.forEach(function(dd) { dd.classList.remove('open'); });
+      }
+    });
+    
+    console.log('[Navbar] Dropdown handlers initialized for ' + dropdownToggles.length + ' dropdowns');
+    
+    // Phone button functionality (phoneBtn already declared at top of function)
+    if (phoneBtn) {
+      phoneBtn.addEventListener('click', function() {
+        // Get phone number from placeholder in page or use default
+        const phoneLinks = document.querySelectorAll('a[href^="tel:"]');
+        const phoneNumber = phoneLinks.length > 0 
+          ? phoneLinks[0].getAttribute('href').replace('tel:', '')
+          : '[business_phone]';
+        
+        window.location.href = 'tel:' + phoneNumber;
+        console.log('[Navbar] Phone button clicked');
+      });
+    }
+    
+    console.log('[Navbar] Mobile menu initialized successfully');
+    
+    // === WHATSAPP BUTTON VISIBILITY FIX ===
+    // Ensure WhatsApp floating button is hidden on desktop and visible on mobile
+    // IMPORTANT: Only target the floating button by its class, NOT generic wa.me links
+    const handleWhatsAppVisibility = function() {
+      const whatsappBtn = document.querySelector('.whatsapp-float');
+      if (whatsappBtn) {
+        const isDesktop = window.innerWidth >= 769;
+        if (isDesktop) {
+          whatsappBtn.style.setProperty('display', 'none', 'important');
+          whatsappBtn.style.setProperty('visibility', 'hidden', 'important');
+          whatsappBtn.style.setProperty('opacity', '0', 'important');
+          whatsappBtn.style.setProperty('pointer-events', 'none', 'important');
+          console.log('[WhatsApp] Button hidden on desktop');
+        } else {
+          whatsappBtn.style.removeProperty('display');
+          whatsappBtn.style.removeProperty('visibility');
+          whatsappBtn.style.removeProperty('opacity');
+          whatsappBtn.style.removeProperty('pointer-events');
+          console.log('[WhatsApp] Button visible on mobile');
+        }
+      }
+    };
+    
+    // Run on load
+    handleWhatsAppVisibility();
+    
+    // Run on resize with debouncing
+    let resizeTimer;
+    window.addEventListener('resize', function() {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(handleWhatsAppVisibility, 100);
+    });
+  });
+})();
+
+</script>
+  
+  <main>
+    <section class="index-hero-section" data-layout-spec="בית-hero" dir="rtl" data-hero-type="fullscreen-scrim">
+  <!-- Background image layer -->
+  <div class="index-hero-bg">
+    <img data-hero-bg="true" data-placeholder="index-hero-image-1" data-context="Cinematic enterprise operations room or modern corporate office with multiple large screens displaying dashboards, charts and data visualizations. Cool blue and teal color grading, dramatic depth of field, professional lighting, visible technology infrastructure in background, wide panoramic shot suitable for full-bleed hero background" width="1440" height="900" src="/assets/site-index-hero-image-1.webp" alt="מרכז פעילות ארגונית מתקדם עם מסכי ניהול ונתונים">
+  </div>
+
+  <!-- Scrim overlay for text legibility -->
+  <div class="index-hero-scrim" aria-hidden="true"></div>
+
+  <!-- Main content -->
+  <div class="index-hero-container">
+    <div class="index-hero-card">
+      <!-- Badge -->
+      <div class="index-hero-badge">
+        <span class="index-hero-badge-dot"></span>
+        <span>מערכת ניהול ארגונים מקיפה</span>
+      </div>
+
+      <!-- Headline -->
+      <h1 class="index-hero-h1">כל הניהול הארגוני שלך — פלטפורמה אחת</h1>
+
+      <!-- Subtitle -->
+      <h3 class="index-hero-subtitle">Techrunow משלבת פיננסים, משאבי אנוש, CRM, פרויקטים, מלאי, אישורים, דוחות ואינטגרציות — מערכת ERP מוכנה לארגון שלך.</h3>
+
+      <!-- Value list -->
+      <ul class="index-hero-values" role="list">
+        <li class="index-hero-value-item">
+          <span class="index-hero-value-icon" aria-hidden="true">
+            <svg data-element-type="icon" data-icon-type="svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+          </span>
+          <span class="index-hero-value-text">מקור אמת אחד לכל הנתונים הארגוניים</span>
+        </li>
+        <li class="index-hero-value-divider" aria-hidden="true"></li>
+        <li class="index-hero-value-item">
+          <span class="index-hero-value-icon" aria-hidden="true">
+            <svg data-element-type="icon" data-icon-type="svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+          </span>
+          <span class="index-hero-value-text">קבלת החלטות מהירה ומבוססת נתונים בזמן אמת</span>
+        </li>
+        <li class="index-hero-value-divider" aria-hidden="true"></li>
+        <li class="index-hero-value-item">
+          <span class="index-hero-value-icon" aria-hidden="true">
+            <svg data-element-type="icon" data-icon-type="svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+          </span>
+          <span class="index-hero-value-text">סקלאבילי לארגונים בצמיחה — מעשרות עד אלפי משתמשים</span>
+        </li>
+      </ul>
+
+      <!-- CTA row -->
+      <div class="index-hero-cta-row">
+        <a href="#contact" class="index-hero-btn-primary">צור קשר עכשיו</a>
+        <a href="#features" class="index-hero-btn-secondary">לכל הפיצ׳רים
+          <svg data-element-type="icon" data-icon-type="svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;margin-inline-start:6px;"><polyline points="15 18 9 12 15 6"></polyline></svg>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom diagonal divider -->
+  <div class="index-hero-divider-wrapper">
+    <svg data-no-icon-edit="true" aria-hidden="true" viewBox="0 0 1440 90" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <!-- Soft diagonal fill -->
+      <path d="M0,90 L0,55 L1440,20 L1440,90 Z" fill="#FAFBFC"></path>
+      <!-- Blue SVG ridge line -->
+      <path d="M0,55 L1440,20" stroke="var(--primary)" stroke-width="1.5" fill="#FAFBFC" opacity="0.35"></path>
+    </svg>
+  </div>
+</section>
+
+<section class="index-capabilities-section" data-layout-spec="בית-capabilities" dir="rtl">
+  <div class="index-capabilities-container">
+
+    <!-- Centered Intro Block -->
+    <div class="index-capabilities-intro">
+      <span class="index-capabilities-eyebrow">יכולות הפלטפורמה</span>
+      <h2 class="index-capabilities-heading">ניהול ארגוני מלא — ללא כלים מפוצלים</h2>
+      <p class="index-capabilities-subtext">מערכת ניהול ארגונים Techrunow מאחדת את כל תהליכי הליבה של הארגון שלך תחת פלטפורמה אחת חכמה. מכספים ומשאבי אנוש ועד פרויקטים ולוגיסטיקה — הכל מחובר, מסונכרן ומוכן לפעולה.</p>
+    </div>
+
+    <!-- Main 2-Column Layout -->
+    <div class="index-capabilities-main">
+
+      <!-- START (Right) Side: Capability Cards -->
+      <div class="index-capabilities-cards-col">
+
+        <!-- Card 1: Finance & Procurement -->
+        <article class="index-cap-card">
+          <div class="index-cap-card-header">
+            <div class="index-cap-card-icon">
+              <svg data-element-type="icon" data-icon-type="svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="7" width="20" height="14" rx="2"></rect><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"></path><line x1="12" y1="12" x2="12" y2="16"></line><line x1="10" y1="14" x2="14" y2="14"></line></svg>
+            </div>
+            <h3 class="index-cap-card-title">כספים ורכש</h3>
+          </div>
+          <p class="index-cap-card-desc">ניהול תקציבים, חשבוניות, הזמנות רכש ותשלומים במקום אחד. שליטה מלאה בתזרים המזומנים עם דוחות אוטומטיים בזמן אמת.</p>
+          <ul class="index-cap-card-tags">
+            <li><span class="index-cap-tag">תקציב וחיזוי</span></li>
+            <li><span class="index-cap-tag">חשבוניות אוטומטיות</span></li>
+            <li><span class="index-cap-tag amber">רכש חכם</span></li>
+          </ul>
+        </article>
+
+        <!-- Card 2: People & HR + Sales & Service -->
+        <article class="index-cap-card">
+          <div class="index-cap-card-header">
+            <div class="index-cap-card-icon">
+              <svg data-element-type="icon" data-icon-type="svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+            </div>
+            <h3 class="index-cap-card-title">משאבי אנוש ומכירות</h3>
+          </div>
+          <p class="index-cap-card-desc">ניהול עובדים, גיוס, נוכחות ושכר לצד ניהול לידים, הזדמנויות ושירות לקוחות — בממשק אחיד שמחבר בין הצוות לביצועים העסקיים.</p>
+          <ul class="index-cap-card-tags">
+            <li><span class="index-cap-tag">ניהול עובדים</span></li>
+            <li><span class="index-cap-tag">CRM מובנה</span></li>
+            <li><span class="index-cap-tag amber">שירות לקוחות</span></li>
+          </ul>
+        </article>
+
+        <!-- Card 3: Projects + Inventory + Reporting -->
+        <article class="index-cap-card">
+          <div class="index-cap-card-header">
+            <div class="index-cap-card-icon">
+              <svg data-element-type="icon" data-icon-type="svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+            </div>
+            <h3 class="index-cap-card-title">פרויקטים, מלאי ודיווח מנהלי</h3>
+          </div>
+          <p class="index-cap-card-desc">תכנון ומעקב פרויקטים, ניהול מלאי ולוגיסטיקה, ולוח מחוונים מנהלי עם תובנות חוצות-מחלקות לקבלת החלטות מהירה ומדויקת.</p>
+          <ul class="index-cap-card-tags">
+            <li><span class="index-cap-tag">ניהול פרויקטים</span></li>
+            <li><span class="index-cap-tag">מלאי ולוגיסטיקה</span></li>
+            <li><span class="index-cap-tag amber">דוחות הנהלה</span></li>
+          </ul>
+        </article>
+
+      </div>
+
+      <!-- END (Left) Side: Product Screenshot Card -->
+      <div class="index-capabilities-visual-col">
+        <div class="index-cap-product-card">
+
+          <!-- Browser Window Frame -->
+          <div class="index-cap-browser-frame">
+            <div class="index-cap-browser-bar">
+              <div class="index-cap-browser-dots">
+                <span></span><span></span><span></span>
+              </div>
+              <div class="index-cap-browser-url">app.techrunow.com</div>
+            </div>
+            <div class="index-cap-screenshot-wrap">
+              <img data-placeholder="index-capabilities-image-1" data-context="A modern enterprise ERP dashboard UI screenshot showing multiple modules: financial charts with bar graphs, HR employee list, project timeline Gantt chart, inventory levels, and executive KPI metrics. Clean white interface with blue and teal accent colors, Hebrew RTL layout, professional SaaS product design, realistic data visualization" width="600" height="380" src="/assets/site-index-capabilities-image-1.webp" alt="לוח מחוונים של מערכת ניהול ארגונים Techrunow">
+            </div>
+          </div>
+
+          <!-- Proof Points -->
+          <div class="index-cap-proof-points">
+            <div class="index-cap-proof-item">
+              <div class="index-cap-proof-icon">
+                <svg data-element-type="icon" data-icon-type="svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M12 8v4l3 3"></path></svg>
+              </div>
+              <div class="index-cap-proof-content">
+                <strong>ראיית על חוצת-מודולים</strong>
+                <span>נתונים חיים מכל המחלקות בדשבורד אחד</span>
+              </div>
+            </div>
+            <div class="index-cap-proof-item">
+              <div class="index-cap-proof-icon">
+                <svg data-element-type="icon" data-icon-type="svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+              </div>
+              <div class="index-cap-proof-content">
+                <strong>הרשאות מבוססות תפקיד</strong>
+                <span>כל משתמש רואה בדיוק מה שרלוונטי עבורו</span>
+              </div>
+            </div>
+            <div class="index-cap-proof-item">
+              <div class="index-cap-proof-icon">
+                <svg data-element-type="icon" data-icon-type="svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 20V10"></path><path d="M12 20V4"></path><path d="M6 20v-6"></path></svg>
+              </div>
+              <div class="index-cap-proof-content">
+                <strong>תהליכים מאוחדים</strong>
+                <span>אוטומציה חוצת-מחלקות ללא כפילויות נתונים</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section class="index-integrations-section" data-layout-spec="בית-integrations" dir="rtl">
+  <div class="integrations-container">
+
+    <!-- Section Header -->
+    <div class="integrations-header">
+      <span class="integrations-badge">אינטגרציות</span>
+      <h2 class="integrations-title">מתחברים לכלים שכבר משתמשים בהם</h2>
+      <p class="integrations-subtitle">Techrunow — מערכת ניהול ארגונים מקיפה — מתממשקת בצורה חלקה עם מאות מערכות ויישומים עסקיים. ממשיכים לעבוד עם הכלים המוכרים, רק חכם יותר.</p>
+    </div>
+
+    <!-- Integration Tiles Grid: 4x3 -->
+    <div class="integrations-grid">
+
+      <!-- Row 1 -->
+      <div class="integration-tile">
+        <div class="tile-icon-wrap">
+          <svg data-element-type="icon" data-icon-type="svg" width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <rect width="36" height="36" rx="8" fill="#EEF2FF"></rect>
+            <path d="M10 24V13l8-4 8 4v11l-8 4-8-4z" stroke="#2563EB" stroke-width="1.8" stroke-linejoin="round" fill="none"></path>
+            <path d="M18 9v15M10 13l8 4 8-4" stroke="#2563EB" stroke-width="1.8" stroke-linejoin="round"></path>
+          </svg>
+        </div>
+        <div class="tile-content">
+          <h3 class="tile-title">הנהלת חשבונות</h3>
+          <p class="tile-desc">סנכרון אוטומטי של חשבוניות, תשלומים ודוחות כספיים</p>
+        </div>
+      </div>
+
+      <div class="integration-tile">
+        <div class="tile-icon-wrap">
+          <svg data-element-type="icon" data-icon-type="svg" width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <rect width="36" height="36" rx="8" fill="#F0FDF9"></rect>
+            <circle cx="18" cy="14" r="4" stroke="#0F766E" stroke-width="1.8" fill="none"></circle>
+            <path d="M10 26c0-4.418 3.582-8 8-8s8 3.582 8 8" stroke="#0F766E" stroke-width="1.8" stroke-linecap="round" fill="none"></path>
+          </svg>
+        </div>
+        <div class="tile-content">
+          <h3 class="tile-title">שכר ומשאבי אנוש</h3>
+          <p class="tile-desc">ניהול שכר, נוכחות ומסלולי עובדים בזמן אמת</p>
+        </div>
+      </div>
+
+      <div class="integration-tile">
+        <div class="tile-icon-wrap">
+          <svg data-element-type="icon" data-icon-type="svg" width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <rect width="36" height="36" rx="8" fill="#FFF7ED"></rect>
+            <path d="M12 10h12a2 2 0 012 2v12a2 2 0 01-2 2H12a2 2 0 01-2-2V12a2 2 0 012-2z" stroke="#F59E0B" stroke-width="1.8" fill="none"></path>
+            <path d="M10 16h16M16 16v10" stroke="#F59E0B" stroke-width="1.8" stroke-linecap="round"></path>
+          </svg>
+        </div>
+        <div class="tile-content">
+          <h3 class="tile-title">CRM ולקוחות</h3>
+          <p class="tile-desc">ניהול קשרי לקוחות, לידים וצינורות מכירה</p>
+        </div>
+      </div>
+
+      <div class="integration-tile">
+        <div class="tile-icon-wrap">
+          <svg data-element-type="icon" data-icon-type="svg" width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <rect width="36" height="36" rx="8" fill="#EEF2FF"></rect>
+            <path d="M11 10h14a1 1 0 011 1v14a1 1 0 01-1 1H11a1 1 0 01-1-1V11a1 1 0 011-1z" stroke="#2563EB" stroke-width="1.8" fill="none"></path>
+            <path d="M14 15h8M14 18h6M14 21h4" stroke="#2563EB" stroke-width="1.8" stroke-linecap="round"></path>
+          </svg>
+        </div>
+        <div class="tile-content">
+          <h3 class="tile-title">כלי מסמכים</h3>
+          <p class="tile-desc">עריכה שיתופית, ניהול גרסאות ואחסון מאובטח</p>
+        </div>
+      </div>
+
+      <!-- Row 2 -->
+      <div class="integration-tile">
+        <div class="tile-icon-wrap">
+          <svg data-element-type="icon" data-icon-type="svg" width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <rect width="36" height="36" rx="8" fill="#F0FDF9"></rect>
+            <path d="M10 26l4-8 4 4 4-6 4 10" stroke="#0F766E" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none"></path>
+          </svg>
+        </div>
+        <div class="tile-content">
+          <h3 class="tile-title">בינה עסקית BI</h3>
+          <p class="tile-desc">דשבורדים, ויזואליזציות ודוחות ניהוליים מתקדמים</p>
+        </div>
+      </div>
+
+      <div class="integration-tile">
+        <div class="tile-icon-wrap">
+          <svg data-element-type="icon" data-icon-type="svg" width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <rect width="36" height="36" rx="8" fill="#FFF7ED"></rect>
+            <path d="M14 22l-2 2 2 2M22 22l2 2-2 2" stroke="#F59E0B" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none"></path>
+            <rect x="11" y="13" width="14" height="9" rx="2" stroke="#F59E0B" stroke-width="1.8" fill="none"></rect>
+          </svg>
+        </div>
+        <div class="tile-content">
+          <h3 class="tile-title">חתימה אלקטרונית</h3>
+          <p class="tile-desc">אישור חוזים ומסמכים משפטיים בצורה מאובטחת</p>
+        </div>
+      </div>
+
+      <div class="integration-tile">
+        <div class="tile-icon-wrap">
+          <svg data-element-type="icon" data-icon-type="svg" width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <rect width="36" height="36" rx="8" fill="#EEF2FF"></rect>
+            <path d="M12 20c0-3.314 2.686-6 6-6s6 2.686 6 6" stroke="#2563EB" stroke-width="1.8" fill="none"></path>
+            <circle cx="18" cy="20" r="2" fill="#2563EB"></circle>
+            <path d="M18 10v2M18 26v2M10 18H8M28 18h-2" stroke="#2563EB" stroke-width="1.8" stroke-linecap="round"></path>
+          </svg>
+        </div>
+        <div class="tile-content">
+          <h3 class="tile-title">תקשורת ושיתוף</h3>
+          <p class="tile-desc">מסרים, פגישות וידאו ועדכוני צוות בפלטפורמה אחת</p>
+        </div>
+      </div>
+
+      <div class="integration-tile">
+        <div class="tile-icon-wrap">
+          <svg data-element-type="icon" data-icon-type="svg" width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <rect width="36" height="36" rx="8" fill="#F0FDF9"></rect>
+            <path d="M12 14h12v10a2 2 0 01-2 2H14a2 2 0 01-2-2V14z" stroke="#0F766E" stroke-width="1.8" fill="none"></path>
+            <path d="M10 14h16M15 14V12a3 3 0 016 0v2" stroke="#0F766E" stroke-width="1.8" stroke-linecap="round" fill="none"></path>
+          </svg>
+        </div>
+        <div class="tile-content">
+          <h3 class="tile-title">אחסון ענן</h3>
+          <p class="tile-desc">גיבוי אוטומטי, גישה מכל מקום ושמירה מאובטחת</p>
+        </div>
+      </div>
+
+      <!-- Row 3 -->
+      <div class="integration-tile">
+        <div class="tile-icon-wrap">
+          <svg data-element-type="icon" data-icon-type="svg" width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <rect width="36" height="36" rx="8" fill="#FFF7ED"></rect>
+            <path d="M10 18h4l3-6 4 12 3-6h2" stroke="#F59E0B" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none"></path>
+          </svg>
+        </div>
+        <div class="tile-content">
+          <h3 class="tile-title">מעבר ממערכת ERP</h3>
+          <p class="tile-desc">הגירת נתונים מלאה ממערכות קיימות ללא אובדן מידע</p>
+        </div>
+      </div>
+
+      <div class="integration-tile">
+        <div class="tile-icon-wrap">
+          <svg data-element-type="icon" data-icon-type="svg" width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <rect width="36" height="36" rx="8" fill="#EEF2FF"></rect>
+            <rect x="11" y="11" width="6" height="6" rx="1" stroke="#2563EB" stroke-width="1.8" fill="none"></rect>
+            <rect x="19" y="11" width="6" height="6" rx="1" stroke="#2563EB" stroke-width="1.8" fill="none"></rect>
+            <rect x="11" y="19" width="6" height="6" rx="1" stroke="#2563EB" stroke-width="1.8" fill="none"></rect>
+            <rect x="19" y="19" width="6" height="6" rx="1" stroke="#2563EB" stroke-width="1.8" fill="none"></rect>
+          </svg>
+        </div>
+        <div class="tile-content">
+          <h3 class="tile-title">ניהול זהויות</h3>
+          <p class="tile-desc">SSO, הרשאות מרכזיות ואבטחת גישה לפי תפקיד</p>
+        </div>
+      </div>
+
+      <div class="integration-tile">
+        <div class="tile-icon-wrap">
+          <svg data-element-type="icon" data-icon-type="svg" width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <rect width="36" height="36" rx="8" fill="#F0FDF9"></rect>
+            <path d="M14 18h8M18 14v8" stroke="#0F766E" stroke-width="1.8" stroke-linecap="round"></path>
+            <rect x="10" y="10" width="16" height="16" rx="3" stroke="#0F766E" stroke-width="1.8" fill="none"></rect>
+          </svg>
+        </div>
+        <div class="tile-content">
+          <h3 class="tile-title">נקודות API</h3>
+          <p class="tile-desc">ממשקי API פתוחים לבניית חיבורים מותאמים אישית</p>
+        </div>
+      </div>
+
+      <div class="integration-tile">
+        <div class="tile-icon-wrap">
+          <svg data-element-type="icon" data-icon-type="svg" width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <rect width="36" height="36" rx="8" fill="#FFF7ED"></rect>
+            <path d="M18 10l2 4h4l-3.5 2.5 1.5 4L18 18l-4 2.5 1.5-4L12 14h4l2-4z" stroke="#F59E0B" stroke-width="1.6" stroke-linejoin="round" fill="none"></path>
+            <path d="M18 22v4" stroke="#F59E0B" stroke-width="1.8" stroke-linecap="round"></path>
+          </svg>
+        </div>
+        <div class="tile-content">
+          <h3 class="tile-title">קונקטורים מותאמים</h3>
+          <p class="tile-desc">פיתוח חיבורים ייחודיים לכל מערכת ארגונית קיימת</p>
+        </div>
+      </div>
+
+    </div><!-- end integrations-grid -->
+
+    <!-- Workflow Diagram -->
+    <div class="workflow-section">
+      <h3 class="workflow-title">זרימת נתונים — מהמקור לפעולה</h3>
+      <div class="workflow-diagram">
+
+        <div class="workflow-step workflow-start">
+          <div class="wf-icon">
+            <svg data-element-type="icon" data-icon-type="svg" width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <circle cx="14" cy="14" r="13" stroke="#2563EB" stroke-width="1.8" fill="none"></circle>
+              <path d="M10 14h8M15 11l3 3-3 3" stroke="#2563EB" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path>
+            </svg>
+          </div>
+          <span class="wf-label">מערכות חיצוניות</span>
+          <small class="wf-sub">ERP, CRM, BI, שכר</small>
+        </div>
+
+        <div class="workflow-arrow" aria-hidden="true">
+          <svg width="48" height="20" viewBox="0 0 48 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" data-no-icon-edit="true">
+            <path d="M2 10h40M36 4l8 6-8 6" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+          </svg>
+        </div>
+
+        <div class="workflow-step workflow-platform">
+          <div class="wf-platform-badge">Techrunow</div>
+          <span class="wf-label">פלטפורמה מרכזית</span>
+          <small class="wf-sub">עיבוד ואינטגרציה</small>
+        </div>
+
+        <div class="workflow-arrow" aria-hidden="true">
+          <svg width="48" height="20" viewBox="0 0 48 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" data-no-icon-edit="true">
+            <path d="M2 10h40M36 4l8 6-8 6" stroke="#0F766E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+          </svg>
+        </div>
+
+        <div class="workflow-outputs">
+          <div class="wf-output">
+            <svg data-element-type="icon" data-icon-type="svg" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M4 14l3-6 3 4 3-6 3 8" stroke="#0F766E" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path>
+            </svg>
+            <span>דיווח</span>
+          </div>
+          <div class="wf-output">
+            <svg data-element-type="icon" data-icon-type="svg" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M5 10h10M10 5l5 5-5 5" stroke="#0F766E" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path>
+            </svg>
+            <span>אישורים</span>
+          </div>
+          <div class="wf-output">
+            <svg data-element-type="icon" data-icon-type="svg" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <rect x="3" y="5" width="14" height="10" rx="2" stroke="#0F766E" stroke-width="1.6" fill="none"></rect>
+              <path d="M7 9h6M7 12h4" stroke="#0F766E" stroke-width="1.4" stroke-linecap="round"></path>
+            </svg>
+            <span>תפעול</span>
+          </div>
+        </div>
+
+      </div><!-- end workflow-diagram -->
+    </div><!-- end workflow-section -->
+
+    <!-- API / Architecture Info Block -->
+    <div class="api-info-block">
+      <div class="api-info-item">
+        <div class="api-info-icon">
+          <svg data-element-type="icon" data-icon-type="svg" width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <rect width="32" height="32" rx="8" fill="#EEF2FF"></rect>
+            <path d="M10 16h12M16 10v12" stroke="#2563EB" stroke-width="2" stroke-linecap="round"></path>
+            <rect x="8" y="8" width="16" height="16" rx="3" stroke="#2563EB" stroke-width="1.6" fill="none"></rect>
+          </svg>
+        </div>
+        <div class="api-info-text">
+          <h3 class="api-info-title">ארכיטקטורה פתוחה</h3>
+          <p class="api-info-desc">כיסוי API מלא עם תיעוד מפורט, Webhooks, ותמיכה ב-REST ו-GraphQL לאינטגרציה גמישה עם כל מערכת.</p>
+        </div>
+      </div>
+      <div class="api-info-item">
+        <div class="api-info-icon">
+          <svg data-element-type="icon" data-icon-type="svg" width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <rect width="32" height="32" rx="8" fill="#F0FDF9"></rect>
+            <path d="M10 22l4-8 4 4 4-8" stroke="#0F766E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"></path>
+            <circle cx="10" cy="22" r="2" fill="#0F766E"></circle>
+            <circle cx="22" cy="10" r="2" fill="#0F766E"></circle>
+          </svg>
+        </div>
+        <div class="api-info-text">
+          <h3 class="api-info-title">הגירת נתונים מודרכת</h3>
+          <p class="api-info-desc">צוות מומחים מלווה את תהליך המעבר ממערכת ERP קיימת, כולל מיפוי שדות, ניקוי נתונים ובדיקות קבלה.</p>
+        </div>
+      </div>
+      <div class="api-info-item">
+        <div class="api-info-icon">
+          <svg data-element-type="icon" data-icon-type="svg" width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <rect width="32" height="32" rx="8" fill="#FFF7ED"></rect>
+            <path d="M16 9v6l4 2" stroke="#F59E0B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+            <circle cx="16" cy="16" r="7" stroke="#F59E0B" stroke-width="1.8" fill="none"></circle>
+          </svg>
+        </div>
+        <div class="api-info-text">
+          <h3 class="api-info-title">גמישות יישום</h3>
+          <p class="api-info-desc">פריסה בענן, on-premise או היברידית — עם אפשרות לשלב מודולים בהדרגה בהתאם לצרכי הארגון.</p>
+        </div>
+      </div>
+    </div><!-- end api-info-block -->
+
+  </div><!-- end integrations-container -->
+
+  <!-- Bottom Arc Divider -->
+  <div class="integrations-divider-wrapper" aria-hidden="true">
+    <svg data-no-icon-edit="true" aria-hidden="true" viewBox="0 0 1200 90" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <ellipse cx="600" cy="90" rx="700" ry="90" fill="#111827"></ellipse>
+    </svg>
+  </div>
+
+</section>
+
+<section class="index-testimonials-section" data-layout-spec="בית-testimonials" dir="rtl">
+  <div class="index-testimonials-container">
+
+    <!-- Header -->
+    <div class="index-testimonials-header">
+      <span class="index-testimonials-eyebrow">לקוחות מספרים</span>
+      <h2 class="index-testimonials-title">תוצאות אמיתיות עבור ארגונים בצמיחה</h2>
+      <p class="index-testimonials-subtitle">מאות ארגונים בישראל כבר בחרו ב-Techrunow כמערכת ניהול הארגונים שלהם — ומרגישים את ההבדל בכל יום עבודה.</p>
+    </div>
+
+    <!-- Trust Metric Strip -->
+    <div class="index-testimonials-metrics">
+      <div class="index-testimonials-metric">
+        <span class="metric-value">99.9<span class="metric-unit">%</span></span>
+        <span class="metric-label">זמינות פלטפורמה</span>
+      </div>
+      <div class="metric-divider"></div>
+      <div class="index-testimonials-metric">
+        <span class="metric-value">68<span class="metric-unit">%</span></span>
+        <span class="metric-label">קיצור מחזורי אישורים</span>
+      </div>
+      <div class="metric-divider"></div>
+      <div class="index-testimonials-metric">
+        <span class="metric-value">3x</span>
+        <span class="metric-label">מהירות הפקת דוחות</span>
+      </div>
+      <div class="metric-divider"></div>
+      <div class="index-testimonials-metric">
+        <span class="metric-value">4.9<span class="metric-unit">/5</span></span>
+        <span class="metric-label">שביעות רצון מהטמעה</span>
+      </div>
+    </div>
+
+    <!-- Quote Cards -->
+    <div class="index-testimonials-cards">
+
+      <article class="index-testimonials-card">
+        <div class="card-quote-mark" aria-hidden="true">“</div>
+        <div class="card-company-type">חברת ייצור בינונית</div>
+        <blockquote class="card-quote-text">
+          לפני Techrunow עבדנו עם שמונה כלים שונים שלא דיברו אחד עם השני. היום יש לנו תמונת מצב אחת, ברורה, בזמן אמת. הנראות התפעולית שקיבלנו שינתה את האופן שבו אנחנו מקבלים החלטות.
+        </blockquote>
+        <div class="card-outcome">
+          <span class="outcome-number">74%</span>
+          <span class="outcome-desc">פחות כלים מנוהלים במקביל</span>
+        </div>
+        <div class="card-author">
+          <div class="author-avatar" aria-hidden="true">
+            <svg data-element-type="icon" data-icon-type="svg" width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="16" cy="16" r="16" fill="rgba(37,99,235,0.15)"></circle>
+              <circle cx="16" cy="13" r="5" fill="rgba(37,99,235,0.5)"></circle>
+              <path d="M6 26c0-5.523 4.477-10 10-10s10 4.477 10 10" fill="rgba(37,99,235,0.3)"></path>
+            </svg>
+          </div>
+          <div class="author-info">
+            <span class="author-name">דנה לוי</span>
+            <span class="author-role">מנהלת תפעול ראשית (COO)</span>
+          </div>
+        </div>
+      </article>
+
+      <article class="index-testimonials-card index-testimonials-card--featured">
+        <div class="card-quote-mark" aria-hidden="true">“</div>
+        <div class="card-company-type">קבוצת שירותים פיננסיים</div>
+        <blockquote class="card-quote-text">
+          כמנהל כספים, אני צריך מספרים מדויקים בלחיצת כפתור. Techrunow נתנה לנו שליטה מלאה בתהליכים הפיננסיים, עם דיווח אוטומטי שחוסך לנו עשרות שעות עבודה בחודש.
+        </blockquote>
+        <div class="card-outcome">
+          <span class="outcome-number">40+</span>
+          <span class="outcome-desc">שעות חיסכון חודשי בדיווח</span>
+        </div>
+        <div class="card-author">
+          <div class="author-avatar" aria-hidden="true">
+            <svg data-element-type="icon" data-icon-type="svg" width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="16" cy="16" r="16" fill="rgba(15,118,110,0.15)"></circle>
+              <circle cx="16" cy="13" r="5" fill="rgba(15,118,110,0.5)"></circle>
+              <path d="M6 26c0-5.523 4.477-10 10-10s10 4.477 10 10" fill="rgba(15,118,110,0.3)"></path>
+            </svg>
+          </div>
+          <div class="author-info">
+            <span class="author-name">אמיר כהן</span>
+            <span class="author-role">מנהל כספים ראשי (CFO)</span>
+          </div>
+        </div>
+      </article>
+
+      <article class="index-testimonials-card">
+        <div class="card-quote-mark" aria-hidden="true">“</div>
+        <div class="card-company-type">רשת קמעונאית לאומית</div>
+        <blockquote class="card-quote-text">
+          ניהלנו את הפעילות שלנו דרך גיליונות אקסל. עם מערכת ERP בענן של Techrunow קיבלנו שליטה בתהליכים, אחידות בין הסניפים ואפשרות לצמוח בלי לאבד שליטה.
+        </blockquote>
+        <div class="card-outcome">
+          <span class="outcome-number">52%</span>
+          <span class="outcome-desc">שיפור ביעילות תהליכים תפעוליים</span>
+        </div>
+        <div class="card-author">
+          <div class="author-avatar" aria-hidden="true">
+            <svg data-element-type="icon" data-icon-type="svg" width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="16" cy="16" r="16" fill="rgba(245,158,11,0.15)"></circle>
+              <circle cx="16" cy="13" r="5" fill="rgba(245,158,11,0.5)"></circle>
+              <path d="M6 26c0-5.523 4.477-10 10-10s10 4.477 10 10" fill="rgba(245,158,11,0.3)"></path>
+            </svg>
+          </div>
+          <div class="author-info">
+            <span class="author-name">מיכל ברק</span>
+            <span class="author-role">מנהלת תפעול</span>
+          </div>
+        </div>
+      </article>
+
+    </div>
+  </div>
+
+  <!-- Bottom Amber Glow Divider -->
+  <div class="index-testimonials-divider-wrapper">
+    <div class="amber-glow-line"></div>
+    <svg data-no-icon-edit="true" aria-hidden="true" viewBox="0 0 1200 48" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0,48 L0,16 Q300,8 600,16 T1200,16 L1200,48 Z" fill="#FFFFFF"></path>
+    </svg>
+  </div>
+
+</section>
+
+<section class="index-cta-section" data-layout-spec="בית-cta" dir="rtl">
+  <div class="index-cta-container">
+    <div class="index-cta-panel">
+      <div class="index-cta-accent-line"></div>
+      <div class="index-cta-content">
+        <h2 class="index-cta-heading">מוכנים להחליף מערכות מנותקות בפתרון אחד מלא?</h2>
+        <p class="index-cta-desc">Techrunow היא מערכת ניהול ארגונים המאחדת את כל הפעילות העסקית שלכם תחת קורת גג אחת. קבלו הדגמה מותאמת אישית, גלו את מוכנות הפלטפורמה לארגון שלכם, ותכננו מסלול הטמעה מעשי ומהיר.</p>
+        <div class="index-cta-buttons">
+          <a href="/contact" class="index-btn-primary">קבלו הדגמה חינם</a>
+          <a href="/features" class="index-btn-secondary">לכל הפיצ'רים</a>
+        </div>
+        <div class="index-cta-reassurance">
+          <div class="index-reassurance-item">
+            <div class="index-reassurance-icon">
+              <svg data-element-type="icon" data-icon-type="svg" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <rect x="2" y="3" width="20" height="14" rx="2"></rect>
+                <path d="M8 21h8M12 17v4"></path>
+              </svg>
+            </div>
+            <div class="index-reassurance-text">
+              <strong>גמישות פריסה מלאה</strong>
+              <span>ענן, On-Premise, או היברידי — לפי הצורך שלכם</span>
+            </div>
+          </div>
+          <div class="index-reassurance-item">
+            <div class="index-reassurance-icon">
+              <svg data-element-type="icon" data-icon-type="svg" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                <circle cx="9" cy="7" r="4"></circle>
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+              </svg>
+            </div>
+            <div class="index-reassurance-text">
+              <strong>ליווי הטמעה מובנה</strong>
+              <span>מומחים מלווים אתכם מהיום הראשון ועד לאחר ההשקה</span>
+            </div>
+          </div>
+          <div class="index-reassurance-item">
+            <div class="index-reassurance-icon">
+              <svg data-element-type="icon" data-icon-type="svg" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+              </svg>
+            </div>
+            <div class="index-reassurance-text">
+              <strong>תוכניות גדילה גמישות</strong>
+              <span>מחירים ומודולים שמתאימים לכל שלב בצמיחה הארגונית</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+  </main>
+  
+  <footer class="site-footer" dir="rtl">
+  <div class="footer-main">
+    <div class="footer-container">
+      <div class="footer-grid">
+
+        <!-- Company Info -->
+        <div class="footer-col footer-brand">
+          <a href="/" class="footer-logo-link">
+            <img src="/assets/techrunow-saas-logo.webp" alt="Techrunow" class="logo">
+          </a>
+          <p class="footer-tagline">פלטפורמת SaaS ארגונית מתקדמת לניהול תהליכים עסקיים בצורה חכמה, יעילה ומאובטחת.</p>
+          <div class="footer-social">
+            <a href="[facebook_handle]" aria-label="Facebook" class="social-link"><i class="fab fa-facebook-f"></i></a>
+            <a href="[instagram_handle]" aria-label="Instagram" class="social-link"><i class="fab fa-instagram"></i></a>
+            <a href="[whatsapp_handle]" aria-label="WhatsApp" class="social-link"><i class="fab fa-whatsapp"></i></a>
+          </div>
+        </div>
+
+        <!-- Quick Links -->
+        <div class="footer-col">
+          <h4 class="footer-heading">
+            <span class="heading-accent"></span>
+            ניווט מהיר
+          </h4>
+          <ul class="footer-links">
+            <li><a href="/features"><i class="fas fa-chevron-left link-arrow"></i>תכונות</a></li>
+            <li><a href="/about"><i class="fas fa-chevron-left link-arrow"></i>אודות</a></li>
+            <li><a href="/contact"><i class="fas fa-chevron-left link-arrow"></i>צור קשר</a></li>
+          </ul>
+        </div>
+
+        <!-- Contact Info -->
+        <div class="footer-col">
+          <h4 class="footer-heading">
+            <span class="heading-accent"></span>
+            צור קשר
+          </h4>
+          <ul class="footer-contact">
+            <li>
+              <span class="contact-icon"><i class="fas fa-envelope"></i></span>
+              <span class="contact-text"><a href="mailto:[business_email]">[business_email]</a></span>
+            </li>
+            <li>
+              <span class="contact-icon"><i class="fas fa-phone"></i></span>
+              <span class="contact-text"><a href="tel:[business_phone]">[business_phone]</a></span>
+            </li>
+            <li><a href="/"><span class="contact-icon"><i class="fas fa-map-marker-alt"></i></span>
+              <span class="contact-text">[business_address]</span></a></li>
+          </ul>
+        </div>
+
+        <!-- Trust Badge / CTA Column -->
+        <div class="footer-col footer-trust">
+          <h4 class="footer-heading">
+            <span class="heading-accent"></span>
+            מוכנים להתחיל?
+          </h4>
+          <p class="trust-text">הצטרפו לאלפי ארגונים שכבר עובדים חכם יותר עם Techrunow.</p>
+          <a href="/contact" class="footer-cta-btn">קבלו הדגמה חינם</a>
+          <div class="trust-badges">
+            <span class="trust-badge"><i class="fas fa-shield-alt"></i> אבטחה מתקדמת</span>
+            <span class="trust-badge"><i class="fas fa-check-circle"></i> תמיכה 24/7</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer Bottom Bar -->
+  <div class="footer-bottom">
+    <div class="footer-container">
+      <div class="footer-bottom-inner">
+        <p class="footer-copyright">© 2026 Techrunow. כל הזכויות שמורות.</p>
+        <div class="footer-legal">
+          <a href="/privacy">מדיניות פרטיות</a>
+          <span class="legal-divider"></span>
+          <a href="/terms">תנאי שימוש</a>
+          <span class="legal-divider"></span>
+          <a href="/accessibility">נגישות</a>
+          <span class="legal-divider"></span>
+          <a href="https://zappy5.com" target="_blank" class="zappy-attribution">נוצר באמצעות Zappy</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+  
+  <a href="https://wa.me/[whatsapp_handle]" class="whatsapp-float" aria-label="WhatsApp">
+    <i class="fab fa-whatsapp"></i>
+  </a>
+  
+  <div data-integration="accessibility:toolbar"></div>
+
+    <script src="/script.js"></script>
+
+    <script id="zappy-mobile-submenu-script">
+    (function() {
+      function initMobileSubmenuToggles() {
+        if (window.innerWidth > 768) {
+          document.querySelectorAll('.mobile-submenu-toggle').forEach(function(btn) { btn.remove(); });
+          document.querySelectorAll('.sub-menu.mobile-expanded').forEach(function(menu) { menu.classList.remove('mobile-expanded'); });
+          return;
+        }
+        var items = document.querySelectorAll('.nav-menu li:has(.sub-menu), nav li:has(.sub-menu), .navbar li:has(.sub-menu), #navMenu li:has(.sub-menu)');
+        items.forEach(function(li) {
+          if (li.querySelector('.mobile-submenu-toggle')) return;
+          var submenu = li.querySelector('.sub-menu');
+          var parentLink = li.querySelector(':scope > a');
+          if (!submenu || !parentLink) return;
+          var toggleBtn = document.createElement('button');
+          toggleBtn.className = 'mobile-submenu-toggle';
+          toggleBtn.setAttribute('aria-label', 'Toggle submenu');
+          toggleBtn.setAttribute('type', 'button');
+          parentLink.insertAdjacentElement('afterend', toggleBtn);
+          toggleBtn.addEventListener('click', function(e) {
+            e.preventDefault(); e.stopPropagation();
+            document.querySelectorAll('.sub-menu.mobile-expanded').forEach(function(menu) {
+              if (menu !== submenu) { menu.classList.remove('mobile-expanded'); var t = menu.parentElement.querySelector('.mobile-submenu-toggle'); if(t) t.classList.remove('expanded'); }
+            });
+            submenu.classList.toggle('mobile-expanded');
+            toggleBtn.classList.toggle('expanded');
+          });
+        });
+      }
+      if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', initMobileSubmenuToggles); }
+      else { initMobileSubmenuToggles(); }
+      var resizeTimer; window.addEventListener('resize', function() { clearTimeout(resizeTimer); resizeTimer = setTimeout(initMobileSubmenuToggles, 250); });
+      // Re-initialize when mobile menu becomes visible (MutationObserver)
+      var observer = new MutationObserver(function(mutations) {
+        mutations.forEach(function(mutation) {
+          if (mutation.type === 'attributes') {
+            var target = mutation.target;
+            if (target.classList && (target.classList.contains('active') || target.classList.contains('open'))) {
+              setTimeout(initMobileSubmenuToggles, 100);
+            }
+          }
+        });
+      });
+      setTimeout(function() {
+        document.querySelectorAll('.mobile-menu, .nav-menu, #navMenu, nav').forEach(function(menu) {
+          observer.observe(menu, { attributes: true, attributeFilter: ['class', 'style'] });
+        });
+      }, 500);
+    })();
+    </script>
+
+    <script id="zappy-mobile-lang-menu-script">
+    (function() {
+      function initMobileLangMenu() {
+        if (window.innerWidth > 768) {
+          var existingMenu = document.querySelector('.mobile-lang-menu');
+          if (existingMenu) existingMenu.remove();
+          return;
+        }
+        if (document.querySelector('.mobile-lang-menu')) return;
+        var switcher = document.querySelector('.lang-switcher');
+        if (!switcher) return;
+        var dropdown = switcher.querySelector('.lang-switcher-dropdown');
+        if (!dropdown) return;
+        var options = dropdown.querySelectorAll('.lang-option');
+        if (options.length === 0) return;
+        var navMenu = document.getElementById('navMenu') || document.querySelector('.nav-menu') || document.querySelector('nav ul');
+        if (!navMenu) return;
+        var currentLang = document.documentElement.lang || 'en';
+        var langConfigs = {
+          he: {name:'עברית',flag:'https://api.iconify.design/circle-flags/il.svg'},
+          en: {name:'English',flag:'https://api.iconify.design/circle-flags/us.svg'},
+          ar: {name:'العربية',flag:'https://api.iconify.design/circle-flags/sa.svg'},
+          fr: {name:'Français',flag:'https://api.iconify.design/circle-flags/fr.svg'},
+          es: {name:'Español',flag:'https://api.iconify.design/circle-flags/es.svg'},
+          de: {name:'Deutsch',flag:'https://api.iconify.design/circle-flags/de.svg'},
+          ru: {name:'Русский',flag:'https://api.iconify.design/circle-flags/ru.svg'},
+          zh: {name:'中文',flag:'https://api.iconify.design/circle-flags/cn.svg'},
+          ja: {name:'日本語',flag:'https://api.iconify.design/circle-flags/jp.svg'},
+          pt: {name:'Português',flag:'https://api.iconify.design/circle-flags/br.svg'},
+          it: {name:'Italiano',flag:'https://api.iconify.design/circle-flags/it.svg'},
+          ko: {name:'한국어',flag:'https://api.iconify.design/circle-flags/kr.svg'}
+        };
+        var container = document.createElement('div');
+        container.className = 'mobile-lang-menu';
+        var currentConfig = langConfigs[currentLang] || {name:currentLang,flag:''};
+        var toggleBtn = document.createElement('button');
+        toggleBtn.className = 'mobile-lang-toggle';
+        toggleBtn.type = 'button';
+        var currentFlagHtml = currentConfig.flag ? '<img src="' + currentConfig.flag + '" width="20" height="20" alt="" style="border-radius:50%;margin-right:8px;margin-left:8px;">' : '';
+        toggleBtn.innerHTML = currentFlagHtml + currentConfig.name;
+        container.appendChild(toggleBtn);
+        var optionsDiv = document.createElement('div');
+        optionsDiv.className = 'mobile-lang-options';
+        var currentLink = document.createElement('a');
+        currentLink.className = 'mobile-lang-option active';
+        currentLink.href = '#';
+        currentLink.innerHTML = currentFlagHtml + currentConfig.name;
+        optionsDiv.appendChild(currentLink);
+        options.forEach(function(opt) {
+          var link = document.createElement('a');
+          link.className = 'mobile-lang-option';
+          link.href = opt.getAttribute('href');
+          link.innerHTML = opt.innerHTML;
+          optionsDiv.appendChild(link);
+        });
+        container.appendChild(optionsDiv);
+        navMenu.appendChild(container);
+        toggleBtn.addEventListener('click', function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          toggleBtn.classList.toggle('expanded');
+          optionsDiv.classList.toggle('expanded');
+        });
+      }
+      if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', initMobileLangMenu); }
+      else { initMobileLangMenu(); }
+      window.addEventListener('resize', function() { clearTimeout(window._mlrt); window._mlrt = setTimeout(initMobileLangMenu, 250); });
+    })();
+    </script>
+</body>
+</html>

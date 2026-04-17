@@ -1,0 +1,47 @@
+# Business — Generative Engine Optimization Map
+
+---
+
+## Pages
+
+### בית
+https://example.com
+מערכת ניהול ארגונים מקיפה שמאחדת את כל תהליכי העסק במקום אחד. Techrunow מביאה לכם את פתרון ה-ERP המתקדם ביותר בענן לישראל. התחילו עכשיו.
+
+### תכונות
+https://example.com/features
+גלו את מגוון התכונות המתקדמות של מערכת ניהול ארגוני Techrunow: אוטומציה, דוחות בזמן אמת, ניהול משאבים ועוד. הפתרון המלא שחיפשתם לארגון שלכם.
+
+### אודות
+https://example.com/about
+Techrunow נולדה מתוך חזון אחד: להעניק לכל ארגון בישראל גישה לפתרון ERP מקיף לארגונים בישראל שהיה שמור בעבר לחברות הגדולות בלבד. הכירו את הצוות שמשנה את הכללים.
+
+### צור קשר
+https://example.com/contact
+רוצים לראות איך מערכת ERP בענן לישראל של Techrunow תשנה את אופן העבודה בארגון שלכם? השאירו פרטים ומומחה שלנו יחזור אליכם עם פתרון מותאם אישית.
+
+## Legal & Policy
+
+### Privacy Policy
+https://example.com/privacy
+Information about how user data is collected, stored, and protected.
+
+### Terms & Conditions
+https://example.com/terms
+Legal terms describing service usage, rights, and policies.
+
+### Accessibility Statement
+https://example.com/accessibility
+Information about WCAG compliance and accessibility features.
+
+---
+
+# Business Context (for LLM understanding)
+
+## About Business
+---
+
+# Additional Resources
+
+- **Sitemap**: https://example.com/sitemap.xml
+- **Robots.txt**: https://example.com/robots.txt
